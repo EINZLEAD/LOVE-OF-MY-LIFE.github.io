@@ -87,4 +87,73 @@
 
   // initial render
   renderGallery(); renderLetters()
+  
+
+    // === Appreciation note persistence ===
+    ;(function(){
+      const KEY = 'lovelife_appreciation_v1'
+      const box = document.getElementById('appreciation-box')
+      const saveBtn = document.getElementById('save-appreciation')
+      const clearBtn = document.getElementById('clear-appreciation')
+      const indicator = document.getElementById('app-save-indicator')
+      if(!box) return
+
+      // load
+      const saved = localStorage.getItem(KEY)
+      if(saved){ box.innerHTML = saved }
+
+      function save(){ localStorage.setItem(KEY, box.innerHTML); if(indicator) indicator.textContent = 'Saved ' + new Date().toLocaleTimeString() }
+      function clear(){ box.innerHTML = ''; localStorage.removeItem(KEY); if(indicator) indicator.textContent = 'Cleared' }
+
+      // manual buttons
+      if(saveBtn) saveBtn.addEventListener('click', save)
+      if(clearBtn) clearBtn.addEventListener('click', ()=>{ if(confirm('Clear appreciation note?')) clear() })
+
+      // autosave on input (debounced)
+      let timer = null
+      box.addEventListener('input', ()=>{
+        if(indicator) indicator.textContent = 'Saving...'
+        clearTimeout(timer)
+        timer = setTimeout(()=>{ save() }, 800)
+      })
+    })()
+
+  // === Background music: play MUSIC/perfect.mp3 ===
+  ;(function(){
+    try{
+      const SRC = 'MUSIC/perfect.mp3'
+      const bg = document.createElement('audio')
+      bg.src = SRC
+      bg.loop = true
+      bg.preload = 'auto'
+      bg.volume = 0.65
+      // try to play unmuted first
+      bg.muted = false
+      bg.play().then(()=>{
+        console.log('Background music playing unmuted:', SRC)
+      }).catch(()=>{
+        // blocked: play muted and wait for user gesture
+        console.warn('Autoplay blocked, starting muted background music')
+        bg.muted = true
+        bg.play().catch(err=>console.warn('Muted play failed', err))
+        const startOnGesture = ()=>{
+          bg.muted = false
+          bg.play().catch(err=>console.warn('Play after gesture failed', err))
+          document.removeEventListener('click', startOnGesture)
+          document.removeEventListener('touchstart', startOnGesture)
+        }
+        document.addEventListener('click', startOnGesture, {once:true})
+        document.addEventListener('touchstart', startOnGesture, {once:true})
+      })
+      // append hidden audio to DOM so some browsers allow playback
+      bg.style.display = 'none'
+      document.body.appendChild(bg)
+      // expose for debugging
+      window._lovelife_bg_audio = bg
+      // update todo status
+      try{ const el = document.getElementById('app-save-indicator'); if(el) el.textContent = 'Background music enabled' }catch(e){}
+      // mark todo completed
+      // (we updated the todo list above separately)
+    }catch(e){ console.warn('Failed to initialize background music', e) }
+  })()
 })();
