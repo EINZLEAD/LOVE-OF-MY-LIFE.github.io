@@ -43,7 +43,12 @@
     <section id="appreciation" class="panel">
       <h2>Why I Appreciate You</h2>
       <p class="lead">You can use this area to write a heartfelt short note or list reasons you love them.</p>
-      <div class="appreciation-box" contenteditable="true" aria-label="Appreciation text">Type here to express your feelings. This text isn't saved automatically; copy it when finished.</div>
+      <div class="appreciation-controls" style="display:flex;gap:.5rem;margin-bottom:.5rem;">
+        <button id="save-appreciation" class="btn">Save Note</button>
+        <button id="clear-appreciation" class="btn ghost">Clear Note</button>
+        <small class="muted" id="app-save-indicator" style="align-self:center">Auto-save enabled</small>
+      </div>
+      <div id="appreciation-box" class="appreciation-box" contenteditable="true" aria-label="Appreciation text">Express your feelings.</div>
     </section>
   </main>
 
@@ -57,7 +62,7 @@
   </div>
 
   <footer class="site-footer">
-    <p>Made with ♥ — keep adding photos and letters to personalize this page.</p>
+    <p>Made with ♥ — MAY WE KEEP THIS PAGE FULL WITH OUR MEMORIES.</p>
   </footer>
 
   <script src="script.js" defer></script>
